@@ -67,7 +67,7 @@ export default function getTriggerForMention(
             (trigger.length > 1 &&
               trigger[0] === trigger[1] &&
               (trigger.length === 2 || trigger[1] === trigger[2]) &&
-              anchorOffset <= end + (trigger.length - 1)) ||
+              anchorOffset <= end + (anchorOffset - 1)) ||
             // @ is in the text or at the end, multi triggers
             (mentionTriggers.length > 1 &&
               anchorOffset >= start + trigger.length &&
