@@ -57,30 +57,58 @@ export default function getTriggerForMention(
     .map(
       ({ start, end }) =>
         mentionTriggers
-          .map((trigger) =>
-            // @ is the first character
-            (start === 0 &&
-              anchorOffset >= start + trigger.length && //should not trigger if the cursor is before the trigger
-              blockText.substr(0, trigger.length) === trigger &&
-              anchorOffset <= end) ||
-            // for case when trigger was same character twice @@, or @@@
-            (trigger.length > 1 &&
-              trigger[0] === trigger[1] &&
-              (trigger.length === 2 || trigger[1] === trigger[2]) &&
-              anchorOffset <= end + (anchorOffset - 1)) ||
-            // @ is in the text or at the end, multi triggers
-            (mentionTriggers.length > 1 &&
+          .map((trigger) => {
+            if (trigger === '@@' && !blockText.includes('@@@')) {
+              if (
+                blockText.substr(start, trigger.length) === trigger &&
+                start === 0 &&
+                anchorOffset >= start + trigger.length &&
+                anchorOffset <=
+                  end +
+                    1 +
+                    anchorOffset -
+                    blockText.substr(start, trigger.length).length
+              ) {
+                return trigger;
+              }
+            }
+            if (trigger === '@@@') {
+              if (
+                blockText.substr(start, trigger.length) === trigger &&
+                start === 0 &&
+                anchorOffset >= start + trigger.length &&
+                anchorOffset <=
+                  end +
+                    2 +
+                    anchorOffset -
+                    blockText.substr(start, trigger.length).length
+              ) {
+                return trigger;
+              }
+            }
+            if (
+              start === 0 &&
+              anchorOffset >= start + trigger.length &&
+              anchorOffset <= end
+            ) {
+              return trigger;
+            } else if (
+              mentionTriggers.length > 1 &&
               anchorOffset >= start + trigger.length &&
               (blockText.substr(start + 1, trigger.length) === trigger ||
                 blockText.substr(start, trigger.length) === trigger) &&
-              anchorOffset <= end) ||
-            // @ is in the text or at the end, single trigger
-            (mentionTriggers.length === 1 &&
+              anchorOffset <= end
+            ) {
+              return trigger;
+            } else if (
+              mentionTriggers.length === 1 &&
               anchorOffset >= start + trigger.length &&
-              anchorOffset <= end)
-              ? trigger
-              : undefined
-          )
+              anchorOffset <= end
+            ) {
+              return trigger;
+            }
+            return undefined;
+          })
           .filter(filterUndefineds)[0]
     )
     .filter(filterUndefineds);

@@ -7,7 +7,9 @@ import createMentionPlugin, {
 import editorStyles from './MultiMentionTriggers.module.css';
 import mentions from './Mentions';
 
-const mentionPlugin = createMentionPlugin({ mentionTrigger: ['#', '@', '@@'] });
+const mentionPlugin = createMentionPlugin({
+  mentionTrigger: ['@', '@@', '@@@'],
+});
 const { MentionSuggestions } = mentionPlugin;
 const plugins = [mentionPlugin];
 
