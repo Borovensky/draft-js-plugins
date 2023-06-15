@@ -51,6 +51,7 @@ export default function getTriggerForMention(
     .getCurrentContent()
     .getBlockForKey(anchorKey)
     .getText();
+
   const triggerForSelectionInsideWord = leaves
     .filter(filterUndefineds)
     .map(
@@ -62,6 +63,11 @@ export default function getTriggerForMention(
               anchorOffset >= start + trigger.length && //should not trigger if the cursor is before the trigger
               blockText.substr(0, trigger.length) === trigger &&
               anchorOffset <= end) ||
+            // for case when trigger was same character twice @@, or @@@
+            (trigger.length > 1 &&
+              trigger[0] === trigger[1] &&
+              (trigger.length === 2 || trigger[1] === trigger[2]) &&
+              anchorOffset <= end + (trigger.length - 1)) ||
             // @ is in the text or at the end, multi triggers
             (mentionTriggers.length > 1 &&
               anchorOffset >= start + trigger.length &&
@@ -83,10 +89,9 @@ export default function getTriggerForMention(
     return null;
   }
 
-  const [
-    activeOffsetKey,
-    activeTrigger,
-  ] = triggerForSelectionInsideWord.entrySeq().first();
+  const [activeOffsetKey, activeTrigger] = triggerForSelectionInsideWord
+    .entrySeq()
+    .first();
 
   return {
     activeOffsetKey,

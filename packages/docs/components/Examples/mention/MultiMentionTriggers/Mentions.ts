@@ -35,7 +35,7 @@ const mentions = [
 
 const topics = [
   {
-    name: 'general',
+    name: 'TWO @@',
   },
   {
     name: 'random',
@@ -45,4 +45,16 @@ const topics = [
   },
 ];
 
-export default { '@': mentions, '(': topics };
+const testArrayAB = [
+  {
+    name: '!!!!!!!!!',
+  },
+  {
+    name: '2222222',
+  },
+  {
+    name: '3333333',
+  },
+];
+
+export default { '@': mentions, '@@': topics, '#': testArrayAB };
